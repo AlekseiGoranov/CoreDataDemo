@@ -54,6 +54,8 @@ class TaskListViewController: UITableViewController {
         navigationController?.navigationBar.tintColor = .white
     }
     
+    
+    
     @objc private func addNewTask() {
         showAlert(with: "New Task", and: "What do you want to do?")
     }
@@ -116,5 +118,24 @@ extension TaskListViewController {
         cell.contentConfiguration = content
         return cell
     }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        let task = taskList[indexPath.row]
+        if editingStyle == .delete {
+            taskList.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
+            context.delete(task)
+            if context.hasChanges {
+                do {
+                    try context.save()
+                } catch let error {
+                    print(error.localizedDescription)
+                }
+            }
+        }
+    }
+    
+    
+    
 }
 
